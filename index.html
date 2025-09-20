@@ -6,6 +6,7 @@
 <script>
 (function(){
   try {
+    // Sync fetch JSON so it's available before app scripts run
     var xhr = new XMLHttpRequest();
     xhr.open('GET', './data/race-league-manager.json', false); // sync
     xhr.send(null);
@@ -16,6 +17,7 @@
       localStorage.getItem = function(key){
         if (!usedOnce) {
           usedOnce = true;
+          // also stash to a few common keys for persistency
           try {
             ['race-league-manager-state','raceLeagueManagerState','RLM_STATE','RaceLeagueManager','appState']
               .forEach(function(k){ try { localStorage.setItem(k, JSON_STR); } catch(e){} });
@@ -1180,17 +1182,10 @@ function drawLifetimeChart(){
       'exportBtn','importInput','addDriverBtn','addRaceBtn','resetPointsBtn','extendPointsBtn','saveRulesBtn'
     ];
     idsToHide.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
-
-    // Keep tabs clickable and allow the Season dropdown to work
-    const allowIds = new Set(['seasonSelect','themeToggle']);
     document.querySelectorAll('input, textarea, select, button').forEach(el => {
-      const insideTabs = el.closest('#tabs') !== null;
-      const isAllowed = allowIds.has(el.id);
-      if (!insideTabs && !isAllowed) {
-        el.disabled = true;
-        el.style.pointerEvents = 'none';
-        el.style.opacity = '0.6';
-      }
+      const isTabBar = el.closest('#tabs');
+      const isThemeToggle = el.id === 'themeToggle';
+      if (!isTabBar && !isThemeToggle) { el.disabled = true; el.style.pointerEvents = 'none'; el.style.opacity = '0.6'; }
     });
   }
   window.addEventListener('load', disableEditing);
