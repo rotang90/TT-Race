@@ -70,3 +70,4 @@ select{
 .kv code{background:#0b131a;padding:2px 6px;border-radius:6px;border:1px solid var(--border)}
 
 .site-footer{opacity:.7;text-align:center;padding:24px 12px}
+.small{font-size:12px;color:var(--muted)}
