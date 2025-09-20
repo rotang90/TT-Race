@@ -1192,5 +1192,37 @@ function drawLifetimeChart(){
 })();
 </script>
 
+  <script>
+// Re-enable Season dropdown + tabs in viewer mode
+window.addEventListener('load', function () {
+  // Keep Season dropdown and Theme toggle active
+  const allowIds = new Set(['seasonSelect', 'themeToggle']);
+
+  // Turn tabs back on (buttons/links inside the tab bar)
+  document.querySelectorAll('#tabs button, #tabs a, .tab').forEach(el => {
+    el.disabled = false;
+    el.style.pointerEvents = 'auto';
+    el.style.opacity = '';
+  });
+
+  // Specifically re-enable the Season dropdown
+  const ss = document.getElementById('seasonSelect');
+  if (ss) {
+    ss.disabled = false;
+    ss.style.pointerEvents = 'auto';
+    ss.style.opacity = '';
+  }
+
+  // If any global "disable all inputs" ran earlier, undo it for allowed controls
+  document.querySelectorAll('input, textarea, select, button').forEach(el => {
+    if (allowIds.has(el.id)) {
+      el.disabled = false;
+      el.style.pointerEvents = 'auto';
+      el.style.opacity = '';
+    }
+  });
+});
+</script>
+
 </body>
 </html>
