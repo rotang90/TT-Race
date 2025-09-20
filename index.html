@@ -1,44 +1,165 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TT Racing — Read‑Only Viewer</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Race League Manager — Read‑Only</title>
+<link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <header class="site-header">
-    <h1>TT Racing — Read‑Only Viewer</h1>
-    <div class="badge">Read‑Only</div>
-  </header>
+<body data-theme="dark">
+<header>
+  <div class="container">
+    <div class="row">
+      <h1>🏁 Race League Manager</h1>
+      <div class="pill">
+        <label for="seasonSelect" class="muted">Season</label>
+        <select id="seasonSelect" class="select"></select>
+      </div>
+      <div class="pill readonly">Read‑Only</div>
+      <div class="spacer"></div>
+      <button id="themeToggle" class="btn small secondary">🌓 Theme</button>
+    </div>
+  </div>
+  <div class="tabs container" id="tabs">
+    <div class="tab active" data-tab="dashboard">Dashboard</div>
+    <div class="tab" data-tab="drivers">Drivers</div>
+    <div class="tab" data-tab="schedule">Schedule</div>
+    <div class="tab" data-tab="results">Results</div>
+    <div class="tab" data-tab="points_rules">Points & Rules</div>
+    <div class="tab" data-tab="lifetime">Lifetime Stats</div>
+  </div>
+</header>
 
-  <main>
-    <section class="controls">
-      <label for="seasonSelect">Season:</label>
-      <select id="seasonSelect" aria-label="Select season"></select>
+<main class="container" style="padding-top:12px;">
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="grid" style="grid-template-columns: 1.2fr .8fr;">
+    <div class="panel">
+      <h2>Leaderboard</h2>
+      <div class="muted">Points = Qualifying + Race + Adjustments.</div>
+      <div class="hr"></div>
+      <table id="leaderboardTable">
+        <thead>
+          <tr>
+            <th data-sort="name">Driver</th>
+            <th>#</th>
+            <th>Color</th>
+            <th data-sort="total">Total Points</th>
+            <th>Quali Pts</th>
+            <th>Race Pts</th>
+            <th>Adj.</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h2>Positions Over Time</h2>
+      <div class="muted">Lower is better (P1 on top).</div>
+      <div class="legend" id="posLegend"></div>
+      <div class="hr"></div>
+      <canvas id="posChart" width="800" height="420" style="max-width:100%;"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Season Summary</h2>
+      <div id="seasonSummary" class="row" style="gap:8px;"></div>
+    </div>
+    <div class="panel">
+      <h2>Upcoming</h2>
+      <div id="upcoming" class="row" style="gap:8px;"></div>
+    </div>
+  </section>
 
-      <nav class="tabs" role="tablist" aria-label="Viewer tabs">
-        <button class="tab active" data-tab="standings" role="tab" aria-selected="true">Standings</button>
-        <button class="tab" data-tab="races" role="tab" aria-selected="false">Races</button>
-        <button class="tab" data-tab="drivers" role="tab" aria-selected="false">Drivers</button>
-        <button class="tab" data-tab="lifetime" role="tab" aria-selected="false">Lifetime Stats</button>
-      </nav>
-    </section>
+  <!-- DRIVERS -->
+  <section id="drivers" class="grid hidden">
+    <div class="panel">
+      <div class="row">
+        <h2>Drivers</h2>
+      </div>
+      <div class="hr"></div>
+      <table id="driversTable">
+        <thead><tr><th>#</th><th>Name</th><th>Number</th><th>Color</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
 
-    <section id="status" class="status" aria-live="polite"></section>
+  <!-- SCHEDULE -->
+  <section id="schedule" class="grid hidden">
+    <div class="panel">
+      <div class="row">
+        <h2>Schedule</h2>
+      </div>
+      <div class="hr"></div>
+      <table id="scheduleTable">
+        <thead><tr><th>Round</th><th>Track (Name / Layout)</th><th>Practice</th><th>Race</th><th>Included in Stats</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
 
-    <section id="content">
-      <div id="view-standings" class="view active"></div>
-      <div id="view-races" class="view"></div>
-      <div id="view-drivers" class="view"></div>
-      <div id="view-lifetime" class="view"></div>
-    </section>
-  </main>
+  <!-- RESULTS (view‑only) -->
+  <section id="results" class="grid hidden">
+    <div class="panel">
+      <h2>Results (View‑Only)</h2>
+      <div class="muted">Derived from season results. DNP in Quali / DNF in Race handled per flags.</div>
+      <div class="hr"></div>
+      <div id="resultsList"></div>
+    </div>
+  </section>
 
-  <footer class="site-footer">
-    <p>This is a read‑only viewer. Editing controls have been removed/disabled.</p>
-  </footer>
+  <!-- POINTS & RULES -->
+  <section id="points_rules" class="grid hidden">
+    <div class="two-col">
+      <div class="panel">
+        <h2>Points</h2>
+        <div class="hr"></div>
+        <div class="two-col">
+          <div>
+            <h3 style="margin-top:0;">Qualifying</h3>
+            <table id="qualiPointsTable">
+              <thead><tr><th>Pos</th><th>Points</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div>
+            <h3 style="margin-top:0;">Race</h3>
+            <table id="racePointsTable">
+              <thead><tr><th>Pos</th><th>Points</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
-  <script src="app.js"></script>
+      <div class="panel">
+        <h2>Rules</h2>
+        <div id="rulesBox" class="rulesbox"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIFETIME STATS -->
+  <section id="lifetime" class="grid hidden">
+    <div class="panel">
+      <h2>Lifetime Stats</h2>
+      <div class="muted">Final season positions across all seasons.</div>
+      <div class="hr"></div>
+      <table id="lifetimeTable">
+        <thead><tr><th>Driver</th><th>Seasons</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  
+    <div class="panel">
+      <h2>Progress Across Seasons</h2>
+      <div class="muted">Final season finishing position by season (lower is better).</div>
+      <div class="legend" id="lifetimeLegend"></div>
+      <div class="hr"></div>
+      <canvas id="lifetimeChart" width="1100" height="420" style="max-width:100%;"></canvas>
+    </div>
+  </section>
+</main>
+
+<script src="app.js"></script>
 </body>
 </html>

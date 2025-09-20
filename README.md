@@ -1,14 +1,14 @@
-# TT Racing — Read‑Only Viewer (Computed Standings)
+# Race League Manager — Read‑Only (v13‑style)
 
-This version **computes standings** from your schema:
-- per‑race `results[].byDriver` (with `qualiPos`, `racePos`, `qDNP`, `dnf`)
-- season `points.quali[]` and `points.race[]`
-- race‑level `adjustments` (bonus/malus points per driver)
-- drivers are read from `drivers[]`
+This build **looks like your v13.7 portal** (header, tabs, tables, dark/light theme) but is **read‑only**:
+- No buttons to add/edit/drag anything
+- No inputs, dialogs, or import/export
+- Auto‑loads `./data.json` from the same GitHub Pages path
+- Computes standings from `results` + `points` (quali/race) + per‑race `adjustments`
+- Renders: Dashboard (Leaderboard, Positions chart, Summary, Upcoming), Drivers, Schedule, Results (view‑only), Points & Rules, Lifetime (table + chart)
 
-## Deploy on GitHub Pages
-1. Upload `index.html`, `app.js`, `styles.css`, and **your** `data.json` to the repo root.
-2. GitHub → Settings → Pages → Deploy from a branch → `main` / root.
-3. Open `https://<user>.github.io/<repo>/`
+## Deploy
+1. Upload `index.html`, `styles.css`, `app.js` and your `data.json` to the repo root.
+2. Enable GitHub Pages (Settings → Pages → Deploy from a branch → `main` / root).
+3. Open your Pages URL.
 
-That's it. No editing controls; everything is read‑only.
